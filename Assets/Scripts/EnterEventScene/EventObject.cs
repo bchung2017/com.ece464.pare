@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EventObject
 {
-    public string eventId { get; set; }
     public string numOfOrgs { get; set; }
+    public IEnumerable<IDictionary<string, string>> orgs { get; set; }
     public string uid { get; set; }
 }

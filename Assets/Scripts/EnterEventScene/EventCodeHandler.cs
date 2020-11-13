@@ -9,19 +9,23 @@ using Newtonsoft.Json.Linq;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class EventCodeHandler : MonoBehaviour
 {
-    public EventObject eventObject;
+    public static EventObject eventObject;
     public InputField input;
 
     void Start() {
         // FirebaseApp.DefaultInstance.SetEditorDatabaseUrl ("https://pare-58bd5.firebaseio.com/");
         var se = new InputField.SubmitEvent();
+        
         }
 
     public void onCodeSubmit() {
         DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
-        FirebaseDatabase.DefaultInstance.GetReference("events").LimitToFirst(1).GetValueAsync().ContinueWith(task => {
+
+        //FIX THIS LIMITTOFIRST() LINE!!!:
+        FirebaseDatabase.DefaultInstance.GetReference("events/" + input.text).GetValueAsync().ContinueWith(task => {
             if (task.IsFaulted) {
                 Debug.Log("error");
             }
@@ -29,19 +33,22 @@ public class EventCodeHandler : MonoBehaviour
                 DataSnapshot snapshot = task.Result;
                 string ss = snapshot.GetRawJsonValue().ToString();
                 Debug.Log("Raw Json: " + ss);
-                dynamic data = JsonConvert.DeserializeObject<dynamic>(ss);
-                var list = new List<EventObject>();
-                foreach (var itemDynamic in data)
-                {
-                    EventObject temp_result = JsonConvert.DeserializeObject<EventObject>(((JProperty)itemDynamic).Value.ToString());
-                    Debug.Log(input.text);
-                    Debug.Log(temp_result.eventId); 
-                    if(temp_result.eventId == input.text) {
-                        Debug.Log("Loading scene...");  
-                        eventObject = temp_result;
-                        SceneManager.LoadScene("EventScene");
-                    }
+                // dynamic data = JsonConvert.DeserializeObject<dynamic>(ss);
+                dynamic data = JsonConvert.DeserializeObject(ss);
+                // Debug.Log(data);
+                // CurrentEventObject.numOfOrgs = data["numOfOrgs"];
+
+                Debug.Log(data["numOfOrgs"].Value.GetType());
+                CurrentEventObject.eventId = input.text;
+                CurrentEventObject.numOfOrgs = data["numOfOrgs"].Value;
+                CurrentEventObject.uid = data["uid"].Value;
+                Debug.Log(data["orgs"].Count);
+                foreach (JProperty org in (JToken)data["orgs"]) {
+                    CurrentEventObject.AddOrg(org.Value.ToString());
                 }
+                CurrentEventObject.Display();
+                SceneManager.LoadScene("EventScene");
+
 
             }
         });
