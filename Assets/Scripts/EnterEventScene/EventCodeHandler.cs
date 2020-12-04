@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Firebase;
 using Firebase.Database;
-using Firebase.Unity.Editor;
 using Newtonsoft.Json;     
 using Newtonsoft.Json.Linq;
 using UnityEngine.SceneManagement;

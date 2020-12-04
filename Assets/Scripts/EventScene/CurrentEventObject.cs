@@ -8,6 +8,28 @@ public static class CurrentEventObject
     public static string numOfOrgs { get; set; }
     public static string uid { get; set; }
     public static List<string> orgs { get; set; }
+    public static Vector3 origin {get; set;}
+
+    public static Vector3[] positions = new Vector3[] {
+        new Vector3 (-3,0,3),
+        new Vector3 (3,0,3),
+        new Vector3 (3,0,-3),
+        new Vector3 (-3,0,-3),
+        new Vector3 (-9,0,-3),
+        new Vector3 (-9,0,3),
+        new Vector3 (9,0,3),
+        new Vector3 (9,0,-3),
+        new Vector3 (9,0,-9),
+        new Vector3 (3,0,-9),
+        new Vector3 (-3,0,-9),
+        new Vector3 (-9,0,-9),
+        new Vector3 (-9,0,9),
+        new Vector3 (-3,0,9),
+        new Vector3 (3,0,9),
+        new Vector3 (9,0,9)
+    };
+
+    public static List<Room> roomPos = new List<Room>();
 
     static CurrentEventObject()
     {

@@ -66,7 +66,7 @@ public class PlaceObject1 : MonoBehaviour
 
     private Vector3 adjPos(Vector3 position)
     {
-        return position + new Vector3(0.0f, 0.05f, 0.0f);
+        return position + new Vector3(0.0f, 0.00f, 0.0f);
     }
 
     public void CreateObject(string assetBundleName)
@@ -95,26 +95,36 @@ public class PlaceObject1 : MonoBehaviour
             // Debug.Log("assetbundlename: " + "Assets/penguin_bundle1");
             // var prefab = loadedAssetBundle.LoadAsset("Tux");
 
-            GameObject penguin_object = (GameObject) Instantiate(objectToPlace);
-            penguin_object.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
+            //Place object
+            Instantiate(objectToPlace, placementPose.position, placementPose.rotation);
+
+            GameObject[] areas = GameObject.FindGameObjectsWithTag("area");
+            foreach(GameObject area in areas) {
+                Room room = new Room(area, area.transform.position);
+                CurrentEventObject.roomPos.Add(room);
+            }
+            CurrentEventObject.origin = placementPose.position;
+            // objectToPlace.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
+            Debug.Log(objectToPlace.transform.position);
+            Debug.Log(placementPose.position);
             // objectToPlace.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
             // objectToPlace.SetActive(true);
-            // buttonPressed = true;
-            // placementPoseIsValid = false;
-            // placementIndicator.SetActive(false);
-            // button.SetActive(false);
-            // origin.GetComponent<ARPlaneManager>().enabled = false;
-            // origin.GetComponent<ARPointCloudManager>().enabled = false;
-            // foreach (var Point in origin.GetComponent<ARPointCloudManager>().trackables)
-            // {
-            //     Point.gameObject.SetActive(false);
-            //     // Destroy(Point.gameObject);   
-            // }
-            // foreach (var Plane in origin.GetComponent<ARPlaneManager>().trackables)
-            // {
-            //     Plane.gameObject.SetActive(false);
-            //     // Destroy(Plane.gameObject);
-            // }
+            buttonPressed = true;
+            placementPoseIsValid = false;
+            placementIndicator.SetActive(false);
+            button.SetActive(false);
+            origin.GetComponent<ARPlaneManager>().enabled = false;
+            origin.GetComponent<ARPointCloudManager>().enabled = false;
+            foreach (var Point in origin.GetComponent<ARPointCloudManager>().trackables)
+            {
+                Point.gameObject.SetActive(false);
+                // Destroy(Point.gameObject);   
+            }
+            foreach (var Plane in origin.GetComponent<ARPlaneManager>().trackables)
+            {
+                Plane.gameObject.SetActive(false);
+                // Destroy(Plane.gameObject);
+            }
         }
     }
 

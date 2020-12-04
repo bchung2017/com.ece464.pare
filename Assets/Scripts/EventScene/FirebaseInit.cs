@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Firebase;
+using Firebase.Database;
 
 public class FirebaseInit : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class FirebaseInit : MonoBehaviour
         if (dependencyStatus == DependencyStatus.Available)
         {
             OnFirebaseInitialized.Invoke();
+            FirebaseDatabase.DefaultInstance.SetPersistenceEnabled(false);
         }   
     }
 }
