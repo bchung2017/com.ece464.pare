@@ -9,25 +9,23 @@ public class SelectRoom : MonoBehaviour
     public Camera cam;
     List<FloorBehavior> floors = new List<FloorBehavior>();
     int layerMask;
-    public GameObject button;
-    int select = 0;
-    bool unselect = false;
+    [SerializeField]
+    private GameObject selectButton;
+    [SerializeField]
+    private GameObject backButton;
+    private bool selectBtnPressed = false;
+    private bool backBtnPressed = false;
+    int selectionMode = 1;
+    private GameObject[] areas;
 
     // Start is called before the first frame update
     void Start()
     {
-        button.GetComponent<Button>().onClick.AddListener(ToggleSelect);
+        selectButton.GetComponent<Button>().onClick.AddListener(ToggleSelect);
+        backButton.GetComponent<Button>().onClick.AddListener(ToggleBack);
         floors = FindObjectsOfType<FloorBehavior>().ToList();
         layerMask = 1 << 9;
-
-
-        GameObject[] areas = GameObject.FindGameObjectsWithTag("area");
-        foreach (GameObject area in areas)
-        {
-            Room room = new Room(area, area.transform.position);
-            CurrentEventObject.roomPos.Add(room);
-        }
-
+        areas = GameObject.FindGameObjectsWithTag("area");
     }
 
     // Update is called once per frame
@@ -37,85 +35,66 @@ public class SelectRoom : MonoBehaviour
         {
             floors = FindObjectsOfType<FloorBehavior>().ToList();
         }
-
-        Vector3 cameraPoint = cam.transform.position;
-
-        if (Physics.Raycast(cameraPoint, cam.transform.forward, out RaycastHit hit, Mathf.Infinity, layerMask))
+        Debug.Log("selectionMode: " + selectionMode);
+        switch (selectionMode)
         {
-            Debug.Log("hit detected");
-            GameObject obj = hit.collider.gameObject;
-            if (obj.CompareTag("floor"))
-            {
-                TurnOn(obj.GetComponent<FloorBehavior>());
+            case 1:
+                Vector3 cameraPoint = cam.transform.position;
 
-                if (select == 1)
+                if (Physics.Raycast(cameraPoint, cam.transform.forward, out RaycastHit hit, Mathf.Infinity, layerMask))
                 {
-                    foreach (Room r in CurrentEventObject.roomPos)
+                    Debug.Log("hit detected");
+                    GameObject obj = hit.collider.gameObject;
+                    if (obj.CompareTag("floor"))
                     {
-                        Debug.Log("instance id of object: " + obj.transform.parent.parent.gameObject.GetInstanceID());
-                        Debug.Log("r instance id: " + r.room.GetInstanceID());
-                        if (r.room.GetInstanceID() == obj.transform.parent.parent.gameObject.GetInstanceID())
+                        TurnOn(obj.GetComponent<FloorBehavior>());
+                        if (selectBtnPressed)
                         {
-                            r.room.transform.position = CurrentEventObject.origin;
-                            r.room.transform.localScale = new Vector3(7, 7, 7);
-                        }
-                        else
-                        {
-                            r.room.SetActive(false);
+                            foreach (GameObject a in areas)
+                            {
+                                Debug.Log("floor ID: " + a.GetComponent<AreaMetadata>().floor.GetInstanceID());
+                                Debug.Log("obj ID: " + obj.GetInstanceID());
+                                if (a.GetComponent<AreaMetadata>().floor.GetInstanceID() == obj.GetInstanceID())
+                                {
+                                    Debug.Log("match detected");
+                                    a.transform.position = CurrentEventObject.origin;
+                                    a.transform.localScale = new Vector3(7, 7, 7);
+                                }
+                                else
+                                {
+                                    Debug.Log("setting inactive");
+                                    a.SetActive(false);
+                                }
+                            }
+                            selectionMode = 2;
+                            selectBtnPressed = false;
                         }
                     }
+
                 }
-
-
-                if (select == 2)
+                else
                 {
-                    foreach (Room r in CurrentEventObject.roomPos)
-                    {
-                        r.room.transform.position = r.ogPos;
-                        r.room.transform.localScale = new Vector3(1, 1, 1);
-                        r.room.SetActive(true);
-                    }    
-                    select = 0;
+                    TurnOffAll();
                 }
+                break;
 
-
-                // if (unselect)
-                // {
-                //      foreach (GameObject area in areafloors)
-                //     {
-                //         CurrentEventObject.roomPos.Add(area.GetInstanceID(), area.transform.parent.gameObject.transform.parent.gameObject.transform.position);
-                //         if (area.GetInstanceID() == obj.GetInstanceID())
-                //         {
-                //             // int value; 
-                //             // CurrentEventObject.roomPos.TryGetValue(obj.GetInstanceID(), out value);
-                //             CurrentRoomObject.locationKey = obj.GetInstanceID();
-                //         }
-                //         else 
-                //         {
-                //             area.transform.parent.gameObject.transform.parent.gameObject.SetActive(false);
-                //         }
-                //     }    
-                //     obj.transform.parent.gameObject.transform.parent.gameObject.transform.position = CurrentEventObject.origin;
-                //     obj.transform.parent.gameObject.transform.parent.gameObject.transform.localScale = new Vector3(7, 7, 7);
-                //     select = false;
-                // }
-                // else {
-                //     obj.transform.parent.gameObject.transform.parent.gameObject.transform.position = CurrentOrganizationObject.orgPos;
-                //     CurrentOrganizationObject.isBuilt = false;
-                //     obj.transform.parent.gameObject.transform.parent.gameObject.transform.localScale = new Vector3(1, 1, 1);
-                //     foreach (GameObject area in areafloors)
-                //     {
-                //         area.transform.parent.gameObject.transform.parent.gameObject.SetActive(true);
-                //     }  
-                // }
-            }
+            case 2:
+                if (backBtnPressed)
+                {
+                    Debug.Log("turning on all areas");
+                    foreach (GameObject a in areas)
+                    {
+                        a.transform.position = a.GetComponent<AreaMetadata>().position;
+                        a.transform.localScale = new Vector3(1, 1, 1);
+                        a.SetActive(true);
+                    }
+                    backBtnPressed = false;
+                    selectionMode = 1;
+                }
+                break;
         }
-        else
-        {
-            TurnOffAll();
-        }
-
     }
+
 
     void TurnOn(FloorBehavior floor)
     {
@@ -137,8 +116,14 @@ public class SelectRoom : MonoBehaviour
 
     void ToggleSelect()
     {
-        select++;
-        Debug.Log(select);
+        selectBtnPressed = true;
+        Debug.Log(selectBtnPressed);
+    }
+
+    void ToggleBack()
+    {
+        backBtnPressed = true;
+        Debug.Log(backBtnPressed);
     }
 
 

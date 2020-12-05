@@ -18,8 +18,6 @@ public class ExhibitMetadata : MonoBehaviour
         this.title = t;
         this.desc = d;
         SetTexture(url);
-
-        
     }
 
     private void SetTexture(string url)
@@ -32,7 +30,6 @@ public class ExhibitMetadata : MonoBehaviour
     {
         UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
         yield return www.SendWebRequest();
-
         if (www.isNetworkError || www.isHttpError)
         {
             Debug.Log(www.error);

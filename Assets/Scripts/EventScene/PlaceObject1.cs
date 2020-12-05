@@ -66,7 +66,7 @@ public class PlaceObject1 : MonoBehaviour
 
     private Vector3 adjPos(Vector3 position)
     {
-        return position + new Vector3(0.0f, 0.00f, 0.0f);
+        return position + new Vector3(0.0f, -10.00f, 0.0f);
     }
 
     public void CreateObject(string assetBundleName)
@@ -96,13 +96,8 @@ public class PlaceObject1 : MonoBehaviour
             // var prefab = loadedAssetBundle.LoadAsset("Tux");
 
             //Place object
-            Instantiate(objectToPlace, placementPose.position, placementPose.rotation);
-
-            GameObject[] areas = GameObject.FindGameObjectsWithTag("area");
-            foreach(GameObject area in areas) {
-                Room room = new Room(area, area.transform.position);
-                CurrentEventObject.roomPos.Add(room);
-            }
+            objectToPlace.SetActive(true);
+            objectToPlace.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
             CurrentEventObject.origin = placementPose.position;
             // objectToPlace.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
             Debug.Log(objectToPlace.transform.position);

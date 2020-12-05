@@ -9,6 +9,7 @@ public static class CurrentEventObject
     public static string uid { get; set; }
     public static List<string> orgs { get; set; }
     public static Vector3 origin {get; set;}
+    public static GameObject ev {get; set;}
 
     public static Vector3[] positions = new Vector3[] {
         new Vector3 (-3,0,3),
@@ -29,7 +30,7 @@ public static class CurrentEventObject
         new Vector3 (9,0,9)
     };
 
-    public static List<Room> roomPos = new List<Room>();
+    public static List<GameObject> areas = new List<GameObject>();
 
     static CurrentEventObject()
     {
