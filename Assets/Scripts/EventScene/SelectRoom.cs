@@ -58,7 +58,7 @@ public class SelectRoom : MonoBehaviour
                                 {
                                     Debug.Log("match detected");
                                     a.transform.position = CurrentEventObject.origin;
-                                    a.transform.localScale = new Vector3(7, 7, 7);
+                                    // a.transform.localScale = new Vector3(7, 7, 7);
                                 }
                                 else
                                 {
@@ -85,7 +85,7 @@ public class SelectRoom : MonoBehaviour
                     foreach (GameObject a in areas)
                     {
                         a.transform.position = a.GetComponent<AreaMetadata>().position;
-                        a.transform.localScale = new Vector3(1, 1, 1);
+                        // a.transform.localScale = new Vector3(1, 1, 1);
                         a.SetActive(true);
                     }
                     backBtnPressed = false;

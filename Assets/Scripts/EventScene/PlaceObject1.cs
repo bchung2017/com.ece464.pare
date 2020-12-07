@@ -23,6 +23,12 @@ public class PlaceObject1 : MonoBehaviour
     void Awake()
     {
         button.GetComponent<Button>().onClick.AddListener(Activate);
+        // obj2 = Instantiate(objectToPlace, Vector3.zero, Quaternion.identity);
+    }
+
+    void Start()
+    {
+        // obj2 = Instantiate(objectToPlace, Vector3.zero, Quaternion.identity);
     }
     void Update()
     {
@@ -99,11 +105,8 @@ public class PlaceObject1 : MonoBehaviour
             objectToPlace.SetActive(true);
             objectToPlace.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
             CurrentEventObject.origin = placementPose.position;
-            // objectToPlace.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
             Debug.Log(objectToPlace.transform.position);
             Debug.Log(placementPose.position);
-            // objectToPlace.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
-            // objectToPlace.SetActive(true);
             buttonPressed = true;
             placementPoseIsValid = false;
             placementIndicator.SetActive(false);
