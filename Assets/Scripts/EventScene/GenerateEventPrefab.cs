@@ -24,6 +24,11 @@ public class GenerateEventPrefab : MonoBehaviour
     void Start()
     {
         CurrentEventObject.Display();
+        CurrentEventObject.AddOrg("test2");
+        CurrentEventObject.AddOrg("test3");
+        CurrentEventObject.AddOrg("test4");
+        CurrentEventObject.AddOrg("test5");
+        CurrentEventObject.AddOrg("test6");
 
         // CurrentEventObject.ev = Instantiate(eventObject, Vector3.zero, Quaternion.identity);
         int numOfAreas = (CurrentEventObject.orgs.Count - 1) / orgsPerArea + 1;
@@ -33,10 +38,9 @@ public class GenerateEventPrefab : MonoBehaviour
             for (int j = 0; j < orgsPerArea; j++)
             {
                 int currentIndex = i * orgsPerArea + j;
-                if (currentIndex >= CurrentEventObject.orgs.Count)
-                {
+                if(currentIndex >= CurrentEventObject.orgs.Count)
                     break;
-                }
+                Debug.Log("i: " + i + "\nj: " + j +"\ncurrentIndex: " + currentIndex);
                 string currentOrgName = CurrentEventObject.orgs[currentIndex];
                 getElements(currentOrgName, snapshot =>
                 {
@@ -44,6 +48,7 @@ public class GenerateEventPrefab : MonoBehaviour
                     UnityMainThreadDispatcher.Instance().Enqueue(CreateExhibit(snapshot, a, j));
                 });
             }
+
             a.transform.SetParent(eventObject.transform);
         }
         UnityMainThreadDispatcher.Instance().Enqueue(FinishLoading());
@@ -77,7 +82,8 @@ public class GenerateEventPrefab : MonoBehaviour
         string t = data2["orgName"].Value.ToString();
         string d = data2["orgDesc"].Value.ToString();
         string u = data2["imgUrl"].Value.ToString();
-        GameObject _exhibit = Instantiate(exhibitObject, CurrentAreaObject.GetNextPos(), Quaternion.identity);
+        GameObject _exhibit = Instantiate(exhibitObject, area.GetComponent<AreaMetadata>().GetNextPos(), Quaternion.identity);
+        Debug.Log("Instantiating " + t + "at " + _exhibit.transform.position.ToString());
         _exhibit.GetComponent<ExhibitMetadata>().SetupMetaData(t, d, u);
         _exhibit.transform.SetParent(area.transform, false);
         yield return null;
