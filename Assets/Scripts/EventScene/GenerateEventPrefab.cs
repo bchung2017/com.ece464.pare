@@ -24,11 +24,9 @@ public class GenerateEventPrefab : MonoBehaviour
     void Start()
     {
         CurrentEventObject.Display();
-        CurrentEventObject.AddOrg("test2");
-        CurrentEventObject.AddOrg("test3");
-        CurrentEventObject.AddOrg("test4");
-        CurrentEventObject.AddOrg("test5");
-        CurrentEventObject.AddOrg("test6");
+        Debug.Log("Number of events in EventScene: " + CurrentEventObject.orgs.Count);
+        // CurrentEventObject.AddOrg("Bloomberg");
+        // CurrentEventObject.AddOrg("Solidworks");
 
         // CurrentEventObject.ev = Instantiate(eventObject, Vector3.zero, Quaternion.identity);
         int numOfAreas = (CurrentEventObject.orgs.Count - 1) / orgsPerArea + 1;
@@ -40,11 +38,11 @@ public class GenerateEventPrefab : MonoBehaviour
                 int currentIndex = i * orgsPerArea + j;
                 if(currentIndex >= CurrentEventObject.orgs.Count)
                     break;
-                Debug.Log("i: " + i + "\nj: " + j +"\ncurrentIndex: " + currentIndex);
+                // Debug.Log("i: " + i + "\nj: " + j +"\ncurrentIndex: " + currentIndex);
                 string currentOrgName = CurrentEventObject.orgs[currentIndex];
                 getElements(currentOrgName, snapshot =>
                 {
-                    Debug.Log("Snapshot retrieved!");
+                    // Debug.Log("Snapshot retrieved for: " + currentOrgName);
                     UnityMainThreadDispatcher.Instance().Enqueue(CreateExhibit(snapshot, a, j));
                 });
             }
@@ -56,7 +54,7 @@ public class GenerateEventPrefab : MonoBehaviour
 
     public void getElements(string currentOrgName, System.Action<DataSnapshot> onSnapshotRetrieved)
     {
-        Debug.Log("current orgName: " + currentOrgName);
+        // Debug.Log("current orgName: " + currentOrgName);
         Query q = FirebaseDatabase.DefaultInstance.GetReference("orgs").OrderByChild("orgName").EqualTo(currentOrgName);
         q.KeepSynced(true);
         q.GetValueAsync().ContinueWith(task =>
@@ -76,14 +74,14 @@ public class GenerateEventPrefab : MonoBehaviour
     private IEnumerator CreateExhibit(DataSnapshot snapshot, GameObject area, int j)
     {
         string ss = snapshot.GetRawJsonValue().ToString();
-        Debug.Log("Raw Json: " + ss);
+        // Debug.Log("Raw Json: " + ss);
         dynamic data = JsonConvert.DeserializeObject(ss);
         dynamic data2 = data.First.Value;
         string t = data2["orgName"].Value.ToString();
         string d = data2["orgDesc"].Value.ToString();
         string u = data2["imgUrl"].Value.ToString();
-        GameObject _exhibit = Instantiate(exhibitObject, area.GetComponent<AreaMetadata>().GetNextPos(), Quaternion.identity);
-        Debug.Log("Instantiating " + t + "at " + _exhibit.transform.position.ToString());
+        GameObject _exhibit = Instantiate(exhibitObject, area.GetComponent<AreaMetadata>().GetNextPos(), Quaternion.Euler(area.GetComponent<AreaMetadata>().GetNextRot()));
+        // Debug.Log("Instantiating " + t + "at " + _exhibit.transform.position.ToString());
         _exhibit.GetComponent<ExhibitMetadata>().SetupMetaData(t, d, u);
         _exhibit.transform.SetParent(area.transform, false);
         yield return null;

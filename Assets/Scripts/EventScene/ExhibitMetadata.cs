@@ -20,6 +20,10 @@ public class ExhibitMetadata : MonoBehaviour
         SetTexture(url);
     }
 
+    public string GetDesc() {
+        return this.desc;
+    }
+
     private void SetTexture(string url)
     {
         StartCoroutine(GetTexture(url));

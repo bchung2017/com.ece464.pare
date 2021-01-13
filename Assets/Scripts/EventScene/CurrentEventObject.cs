@@ -54,4 +54,12 @@ public static class CurrentEventObject
             Debug.Log(value);
         }
     }
+
+    public static bool IsOriginSet()
+    {
+        if(origin != null)
+            return true;
+        else
+            return false;
+    }
 }

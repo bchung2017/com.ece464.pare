@@ -35,7 +35,7 @@ public class SelectRoom : MonoBehaviour
         {
             floors = FindObjectsOfType<FloorBehavior>().ToList();
         }
-        Debug.Log("selectionMode: " + selectionMode);
+        // Debug.Log("selectionMode: " + selectionMode);
         switch (selectionMode)
         {
             case 1:

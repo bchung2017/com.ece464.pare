@@ -11,6 +11,7 @@ public class PlaceObject1 : MonoBehaviour
     public ARSessionOrigin origin;
     public ARRaycastManager raycastManager;
     public GameObject placementIndicator;       //gameobject that visualizes where to set object
+    public GameObject placementVisualizer;
     public GameObject objectToPlace;            //object to place in placementIndicator's location
     public GameObject button;
     public Camera cam;
@@ -59,13 +60,14 @@ public class PlaceObject1 : MonoBehaviour
     {
         if (placementPoseIsValid)
         {
-            placementIndicator.SetActive(true);
+            placementVisualizer.SetActive(true);
             placementIndicator.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
+            placementVisualizer.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
             button.SetActive(true);
         }
         else
         {
-            placementIndicator.SetActive(false);
+            placementVisualizer.SetActive(false);
             button.SetActive(false);
         }
     }
@@ -105,10 +107,16 @@ public class PlaceObject1 : MonoBehaviour
             objectToPlace.SetActive(true);
             objectToPlace.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
             CurrentEventObject.origin = placementPose.position;
+            GameObject[] areas = GameObject.FindGameObjectsWithTag("area");
+            foreach (GameObject a in areas)
+            {
+                a.GetComponent<AreaMetadata>().SetOgPosition(a.transform.position);
+            }
             Debug.Log(objectToPlace.transform.position);
             Debug.Log(placementPose.position);
             buttonPressed = true;
             placementPoseIsValid = false;
+            placementVisualizer.SetActive(false);
             placementIndicator.SetActive(false);
             button.SetActive(false);
             origin.GetComponent<ARPlaneManager>().enabled = false;
